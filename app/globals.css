@@ -1,1 +1,64 @@
 @import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-primary: #f87070;
+  --color-light: #d7e0ff;
+  --color-light-muted: rgb(215 224 255 / 0.4);
+  --color-navy-900: #161932;
+  --color-navy-800: #1e213f;
+  --color-navy-700: #2e325a;
+  --color-navy-600: #272c5a;
+  --color-navy-950: #0e112a;
+  --color-shadow: #121530;
+
+  /* Fonts */
+  --font-sans: var(--font-kumbh-sans), sans-serif;
+
+  /* Font sizes */
+  --text-timer-sm: 5rem; /* 80px */
+  --text-timer-sm--letter-spacing: -0.25rem;
+  --text-timer-lg: 6.25rem; /* 100px */
+  --text-timer-lg--letter-spacing: -0.3125rem;
+  --text-label-sm: 0.875rem; /* 14px */
+  --text-label-lg: 1rem; /* 16px */
+  --text-tab-sm: 0.75rem; /* 12px */
+  --text-tab-lg: 0.875rem; /* 14px */
+
+  /* Letter spacing */
+  --tracking-label-sm: 0.8125rem; /* 13px */
+  --tracking-label-lg: 0.9375rem; /* 15px */
+  --spacing-label-sm: 0.8125rem;
+  --spacing-label-lg: 0.9375rem;
+
+  /* Spacing */
+  --spacing-logo-sm: 2rem;
+  --spacing-logo-md: 5rem;
+  --spacing-logo-lg: 3rem;
+  --spacing-tabs-sm: 2.8125rem;
+  --spacing-tabs-md: 3.4375rem;
+  --spacing-timer-sm: 3rem;
+  --spacing-timer-md: 6.8125rem;
+  --spacing-timer-lg: 2.8125rem;
+  --spacing-settings-sm: 4.9375rem;
+  --spacing-settings-md: 9rem;
+  --spacing-settings-lg: 3.9375rem;
+
+  /* Sizes */
+  --spacing-tabs-w-sm: 20.4375rem; /* 327px */
+  --spacing-tabs-w-md: 23.3125rem; /* 373px */
+  --spacing-tab-w-sm: 6.5625rem; /* 105px */
+  --spacing-tab-w-md: 7.5rem; /* 120px */
+  --spacing-timer-outer-sm: 18.75rem; /* 300px */
+  --spacing-timer-outer-md: 25.625rem; /* 410px */
+
+  /* Shadows */
+  --shadow-timer-sm: -25px -25px 50px var(--color-navy-600),
+    25px 25px 50px var(--color-shadow);
+  --shadow-timer-md: -50px -50px 100px var(--color-navy-600),
+    50px 50px 100px var(--color-shadow);
+
+  /* Breakpoints */
+  --breakpoint-md: 48rem; /* 768px */
+  --breakpoint-lg: 90rem; /* 1440px */
+}
