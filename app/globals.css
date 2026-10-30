@@ -72,6 +72,8 @@
   --spacing-tab-w-md: 7.5rem; /* 120px */
   --spacing-timer-outer-sm: 18.75rem; /* 300px */
   --spacing-timer-outer-md: 25.625rem; /* 410px */
+  --spacing-timer-ring-sm: 15.5rem; /* 248px */
+  --spacing-timer-ring-md: 21.1875rem; /* 339px */
   --spacing-modal-sm: 20.4375rem; /* 327px */
   --spacing-modal-md: 33.75rem; /* 540px */
   --spacing-modal-pad-sm: 1.5rem; /* 24px */
