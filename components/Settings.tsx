@@ -2,24 +2,6 @@
 import useSettingsStore from "@/store/settingStore";
 import { useShallow } from "zustand/shallow";
 
-const times = [
-  { label: "pomodoro", value: 25 },
-  { label: "short break", value: 5 },
-  { label: "long break", value: 15 },
-];
-
-const fonts = [
-  { name: "Kumbh Sans", className: "font-sans" },
-  { name: "Roboto Slab", className: "font-slab" },
-  { name: "Space Mono", className: "font-mono" },
-];
-
-const colors = [
-  { name: "red", className: "bg-primary" },
-  { name: "cyan", className: "bg-cyan" },
-  { name: "purple", className: "bg-purple" },
-];
-
 const headingClasses =
   "text-center text-modal-heading-sm font-bold uppercase tracking-modal-heading-sm text-navy-900 md:text-left md:text-modal-heading-lg md:tracking-modal-heading-lg";
 
@@ -30,12 +12,16 @@ const optionHoverClasses =
   "outline outline-1 outline-offset-4 outline-transparent transition-[outline-color] hover:outline-input";
 
 export default function Settings() {
-  const { closeSettings } = useSettingsStore(
-    useShallow((state) => ({
-      isOpen: state.isOpen,
-      closeSettings: state.closeSettings,
-    })),
-  );
+  const { closeSettings, settings, incrementTime, decrementTime } =
+    useSettingsStore(
+      useShallow((state) => ({
+        isOpen: state.isOpen,
+        closeSettings: state.closeSettings,
+        settings: state.settings,
+        incrementTime: state.incrementTime,
+        decrementTime: state.decrementTime,
+      })),
+    );
 
   return (
     <div className="fixed inset-0 z-10 flex items-center justify-center bg-overlay px-6">
@@ -74,26 +60,29 @@ export default function Settings() {
               Time (minutes)
             </legend>
             <div className="clear-both flex flex-col gap-2 pt-4 md:flex-row md:gap-5 md:pt-6">
-              {times.map(({ label, value }) => (
+              {settings.times.map((item) => (
                 <label
-                  key={label}
+                  key={item.id}
                   className="flex items-center justify-between md:flex-col md:items-start md:gap-2"
                 >
                   <span className="text-modal-label font-bold text-navy-800/40">
-                    {label}
+                    {item.label}
                   </span>
                   <span className="relative flex h-time-input-h-sm w-time-input items-center rounded-input bg-input md:h-time-input-h-md">
                     <input
                       type="number"
                       min={1}
-                      defaultValue={value}
+                      value={item.value}
+                      readOnly
                       className="size-full rounded-input bg-transparent px-4 text-modal-input font-bold tracking-modal-input text-navy-800 outline-none"
                     />
                     <span className="absolute right-4 flex flex-col gap-2">
                       <button
                         type="button"
-                        aria-label={`Increase ${label}`}
+                        aria-label={`Increase ${item.label}`}
                         className={arrowClasses}
+                        onClick={() => incrementTime(item.id)}
+                        disabled={item.value === 60}
                       >
                         <svg width="14" height="7" aria-hidden="true">
                           <path
@@ -106,8 +95,9 @@ export default function Settings() {
                       </button>
                       <button
                         type="button"
-                        aria-label={`Decrease ${label}`}
+                        aria-label={`Decrease ${item.label}`}
                         className={arrowClasses}
+                        onClick={() => decrementTime(item.id)}
                       >
                         <svg width="14" height="7" aria-hidden="true">
                           <path
@@ -128,13 +118,13 @@ export default function Settings() {
           <div className="flex flex-col items-center gap-4 border-b border-divider py-6 md:flex-row md:justify-between">
             <h3 className={headingClasses}>Font</h3>
             <div className="flex gap-4">
-              {fonts.map(({ name, className }, i) => (
+              {settings.fonts.map((item, i) => (
                 <button
-                  key={name}
+                  key={item.id}
                   type="button"
-                  aria-label={name}
+                  aria-label={item.name}
                   aria-pressed={i === 0}
-                  className={`cursor-pointer size-option rounded-full text-font-option ${optionHoverClasses} ${className} ${
+                  className={`cursor-pointer size-option rounded-full text-font-option ${optionHoverClasses} ${item.className} ${
                     i === 0
                       ? "bg-navy-900 font-bold text-white"
                       : "bg-input text-navy-800/70"
@@ -149,13 +139,13 @@ export default function Settings() {
           <div className="flex flex-col items-center gap-4 pt-6 md:flex-row md:justify-between">
             <h3 className={headingClasses}>Color</h3>
             <div className="flex gap-4">
-              {colors.map(({ name, className }, i) => (
+              {settings.colors.map((item, i) => (
                 <button
-                  key={name}
+                  key={item.id}
                   type="button"
-                  aria-label={name}
+                  aria-label={item.name}
                   aria-pressed={i === 0}
-                  className={`cursor-pointer flex size-option items-center justify-center rounded-full ${optionHoverClasses} ${className}`}
+                  className={`cursor-pointer flex size-option items-center justify-center rounded-full ${optionHoverClasses} ${item.className}`}
                 >
                   {i === 0 && (
                     <svg width="15" height="11" aria-hidden="true">
