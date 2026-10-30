@@ -7,8 +7,10 @@ export default function ModeTabs() {
         <button
           key={mode}
           type="button"
-          className={`h-12 w-tab-w-sm rounded-full text-tab-sm font-bold md:w-tab-w-md md:text-tab-lg ${
-            i === 0 ? "bg-primary text-navy-800" : "text-light-muted"
+          className={`cursor-pointer h-12 w-tab-w-sm rounded-full text-tab-sm font-bold md:w-tab-w-md md:text-tab-lg ${
+            i === 0
+              ? "bg-primary text-navy-800"
+              : "text-light-muted transition-colors hover:text-light"
           }`}
         >
           {mode}

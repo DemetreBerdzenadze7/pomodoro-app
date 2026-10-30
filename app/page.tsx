@@ -1,8 +1,17 @@
+"use client";
+
 import Image from "next/image";
 import ModeTabs from "@/components/ModeTabs";
+import Settings from "@/components/Settings";
 import Timer from "@/components/Timer";
+import SettingsIcon from "@/components/SettingsIcon";
+import useSettingsStore from "@/store/settingStore";
+import { useShallow } from "zustand/shallow";
 
 export default function Home() {
+  const { isOpen } = useSettingsStore(
+    useShallow((state) => ({ isOpen: state.isOpen })),
+  );
   return (
     <main className="flex flex-1 flex-col items-center px-6 pb-12 md:pb-24 lg:pb-12">
       <h1 className="mt-logo-sm md:mt-logo-md lg:mt-logo-lg">
@@ -20,13 +29,9 @@ export default function Home() {
 
       <Timer />
 
-      <button
-        type="button"
-        aria-label="Settings"
-        className="mt-settings-sm opacity-50 transition-opacity hover:opacity-100 md:mt-settings-md lg:mt-settings-lg"
-      >
-        <Image src="/images/icon-settings.svg" alt="" width={28} height={28} />
-      </button>
+      <SettingsIcon />
+
+      {isOpen && <Settings />}
     </main>
   );
 }

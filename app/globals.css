@@ -3,6 +3,7 @@
 @theme {
   /* Colors */
   --color-primary: #f87070;
+  --color-primary-hover: #f98d8d;
   --color-light: #d7e0ff;
   --color-light-muted: rgb(215 224 255 / 0.4);
   --color-navy-900: #161932;
@@ -11,9 +12,17 @@
   --color-navy-600: #272c5a;
   --color-navy-950: #0e112a;
   --color-shadow: #121530;
+  --color-cyan: #70f3f8;
+  --color-purple: #d881f8;
+  --color-white: #ffffff;
+  --color-input: #eff1fa;
+  --color-divider: #e3e1e1;
+  --color-overlay: rgb(10 12 28 / 0.5);
 
   /* Fonts */
   --font-sans: var(--font-kumbh-sans), sans-serif;
+  --font-slab: var(--font-roboto-slab), serif;
+  --font-mono: var(--font-space-mono), monospace;
 
   /* Font sizes */
   --text-timer-sm: 5rem; /* 80px */
@@ -24,12 +33,23 @@
   --text-label-lg: 1rem; /* 16px */
   --text-tab-sm: 0.75rem; /* 12px */
   --text-tab-lg: 0.875rem; /* 14px */
+  --text-modal-title-sm: 1.25rem; /* 20px */
+  --text-modal-title-lg: 1.75rem; /* 28px */
+  --text-modal-heading-sm: 0.6875rem; /* 11px */
+  --text-modal-heading-lg: 0.8125rem; /* 13px */
+  --text-modal-label: 0.75rem; /* 12px */
+  --text-modal-input: 0.875rem; /* 14px */
+  --text-font-option: 0.9375rem; /* 15px */
+  --text-apply: 1rem; /* 16px */
 
   /* Letter spacing */
   --tracking-label-sm: 0.8125rem; /* 13px */
   --tracking-label-lg: 0.9375rem; /* 15px */
   --spacing-label-sm: 0.8125rem;
   --spacing-label-lg: 0.9375rem;
+  --tracking-modal-heading-sm: 0.25rem; /* 4px */
+  --tracking-modal-heading-lg: 0.3125rem; /* 5px */
+  --tracking-modal-input: 0.0625rem; /* 1px */
 
   /* Spacing */
   --spacing-logo-sm: 2rem;
@@ -51,6 +71,21 @@
   --spacing-tab-w-md: 7.5rem; /* 120px */
   --spacing-timer-outer-sm: 18.75rem; /* 300px */
   --spacing-timer-outer-md: 25.625rem; /* 410px */
+  --spacing-modal-sm: 20.4375rem; /* 327px */
+  --spacing-modal-md: 33.75rem; /* 540px */
+  --spacing-modal-pad-sm: 1.5rem; /* 24px */
+  --spacing-modal-pad-md: 2.5rem; /* 40px */
+  --spacing-time-input: 8.75rem; /* 140px */
+  --spacing-time-input-h-sm: 2.5rem; /* 40px */
+  --spacing-time-input-h-md: 3rem; /* 48px */
+  --spacing-option: 2.5rem; /* 40px */
+  --spacing-apply-w: 8.75rem; /* 140px */
+  --spacing-apply-h: 3.3125rem; /* 53px */
+
+  /* Radius */
+  --radius-modal-sm: 0.9375rem; /* 15px */
+  --radius-modal-md: 1.5625rem; /* 25px */
+  --radius-input: 0.625rem; /* 10px */
 
   /* Shadows */
   --shadow-timer-sm: -25px -25px 50px var(--color-navy-600),
@@ -61,4 +96,21 @@
   /* Breakpoints */
   --breakpoint-md: 48rem; /* 768px */
   --breakpoint-lg: 90rem; /* 1440px */
+}
+
+/* Hide native number input spinners (custom arrows are used instead) */
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
+  }
 }

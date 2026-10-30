@@ -30,7 +30,7 @@ export default function Timer() {
           </span>
           <button
             type="button"
-            className="mt-5 pl-label-sm text-label-sm font-bold uppercase tracking-label-sm md:pl-label-lg md:text-label-lg md:tracking-label-lg"
+            className="cursor-pointer mt-5 pl-label-sm text-label-sm font-bold uppercase tracking-label-sm transition-colors hover:text-primary md:pl-label-lg md:text-label-lg md:tracking-label-lg"
           >
             Pause
           </button>
