@@ -16,7 +16,7 @@ export default function Timer() {
             cy="50"
             r={RADIUS}
             fill="none"
-            className="stroke-primary"
+            className="stroke-accent"
             strokeWidth="3"
             strokeLinecap="round"
             strokeDasharray={CIRCUMFERENCE}
@@ -30,7 +30,7 @@ export default function Timer() {
           </span>
           <button
             type="button"
-            className="cursor-pointer mt-5 pl-label-sm text-label-sm font-bold uppercase tracking-label-sm transition-colors hover:text-primary md:pl-label-lg md:text-label-lg md:tracking-label-lg"
+            className="cursor-pointer mt-5 pl-label-sm text-label-sm font-bold uppercase tracking-label-sm transition-colors hover:text-accent md:pl-label-lg md:text-label-lg md:tracking-label-lg"
           >
             Pause
           </button>

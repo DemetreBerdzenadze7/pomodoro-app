@@ -4,6 +4,7 @@
   /* Colors */
   --color-primary: #f87070;
   --color-primary-hover: #f98d8d;
+  --color-accent: var(--color-primary); /* selected theme color, overridden at runtime */
   --color-light: #d7e0ff;
   --color-light-muted: rgb(215 224 255 / 0.4);
   --color-navy-900: #161932;

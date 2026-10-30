@@ -1,11 +1,11 @@
-import { Times, Font } from "@/types/settingTypes";
+import { Times, Font, Color, SettingsFormValues } from "@/types/settingTypes";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
 interface Settings {
   times: Times;
   fonts: Font;
-  colors: Font;
+  colors: Color;
 }
 
 type SettingsStore = {
@@ -16,8 +16,9 @@ type SettingsStore = {
 
   //set settings
   settings: Settings;
-  incrementTime: (id: number) => void;
-  decrementTime: (id: number) => void;
+  selectedFontId: number;
+  selectedColorId: number;
+  applySettings: (values: SettingsFormValues) => void;
 };
 
 const useSettingsStore = create<SettingsStore>()(
@@ -40,20 +41,37 @@ const useSettingsStore = create<SettingsStore>()(
         { id: 3, name: "Space Mono", className: "font-mono" },
       ],
       colors: [
-        { id: 1, name: "red", className: "bg-primary" },
-        { id: 2, name: "cyan", className: "bg-cyan" },
-        { id: 3, name: "purple", className: "bg-purple" },
+        {
+          id: 1,
+          name: "red",
+          className: "bg-primary",
+          value: "var(--color-primary)",
+        },
+        {
+          id: 2,
+          name: "cyan",
+          className: "bg-cyan",
+          value: "var(--color-cyan)",
+        },
+        {
+          id: 3,
+          name: "purple",
+          className: "bg-purple",
+          value: "var(--color-purple)",
+        },
       ],
     },
-    incrementTime: (id) =>
+    selectedFontId: 1,
+    selectedColorId: 1,
+
+    // apply settings from the form
+    applySettings: ({ times, fontId, colorId }) =>
       set((state) => {
-        const time = state.settings.times.find((t) => t.id === id);
-        if (time) time.value = Math.min(60, (time.value += 5));
-      }),
-    decrementTime: (id) =>
-      set((state) => {
-        const time = state.settings.times.find((t) => t.id === id);
-        if (time) time.value = Math.max(0, (time.value -= 5));
+        state.settings.times.forEach((time, i) => {
+          time.value = times[i];
+        });
+        state.selectedFontId = fontId;
+        state.selectedColorId = colorId;
       }),
   })),
 );

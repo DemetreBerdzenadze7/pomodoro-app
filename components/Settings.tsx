@@ -1,5 +1,7 @@
 "use client";
 import useSettingsStore from "@/store/settingStore";
+import { SettingsFormValues } from "@/types/settingTypes";
+import { useForm, useWatch } from "react-hook-form";
 import { useShallow } from "zustand/shallow";
 
 const headingClasses =
@@ -8,20 +10,63 @@ const headingClasses =
 const arrowClasses =
   "flex cursor-pointer text-navy-800/25 transition-colors hover:text-navy-800";
 
+const MIN_TIME = 1;
+const MAX_TIME = 60;
+const TIME_STEP = 5;
+
 const optionHoverClasses =
   "outline outline-1 outline-offset-4 outline-transparent transition-[outline-color] hover:outline-input";
 
 export default function Settings() {
-  const { closeSettings, settings, incrementTime, decrementTime } =
-    useSettingsStore(
-      useShallow((state) => ({
-        isOpen: state.isOpen,
-        closeSettings: state.closeSettings,
-        settings: state.settings,
-        incrementTime: state.incrementTime,
-        decrementTime: state.decrementTime,
-      })),
-    );
+  const {
+    closeSettings,
+    settings,
+    selectedFontId,
+    selectedColorId,
+    applySettings,
+  } = useSettingsStore(
+    useShallow((state) => ({
+      closeSettings: state.closeSettings,
+      settings: state.settings,
+      selectedFontId: state.selectedFontId,
+      selectedColorId: state.selectedColorId,
+      applySettings: state.applySettings,
+    })),
+  );
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useForm<SettingsFormValues>({
+    mode: "onChange",
+    defaultValues: {
+      times: settings.times.map((time) => time.value),
+      fontId: selectedFontId,
+      colorId: selectedColorId,
+    },
+  });
+
+  const [times, fontId, colorId] = useWatch({
+    control,
+    name: ["times", "fontId", "colorId"],
+  });
+
+  const changeTime = (index: number, step: number) => {
+    const current = getValues(`times.${index}`) || 0;
+    const next = Math.min(MAX_TIME, Math.max(0, current + step));
+    setValue(`times.${index}`, next, { shouldValidate: true });
+  };
+
+  const onSubmit = (values: SettingsFormValues) => {
+    applySettings(values);
+    closeSettings();
+  };
+
+  console.log(settings);
 
   return (
     <div className="fixed inset-0 z-10 flex items-center justify-center bg-overlay px-6">
@@ -54,121 +99,145 @@ export default function Settings() {
           </button>
         </header>
 
-        <div className="px-modal-pad-sm md:px-modal-pad-md">
-          <fieldset className="border-b border-divider py-6 md:pb-6">
-            <legend className={`${headingClasses} float-left w-full`}>
-              Time (minutes)
-            </legend>
-            <div className="clear-both flex flex-col gap-2 pt-4 md:flex-row md:gap-5 md:pt-6">
-              {settings.times.map((item) => (
-                <label
-                  key={item.id}
-                  className="flex items-center justify-between md:flex-col md:items-start md:gap-2"
-                >
-                  <span className="text-modal-label font-bold text-navy-800/40">
-                    {item.label}
-                  </span>
-                  <span className="relative flex h-time-input-h-sm w-time-input items-center rounded-input bg-input md:h-time-input-h-md">
-                    <input
-                      type="number"
-                      min={1}
-                      value={item.value}
-                      readOnly
-                      className="size-full rounded-input bg-transparent px-4 text-modal-input font-bold tracking-modal-input text-navy-800 outline-none"
-                    />
-                    <span className="absolute right-4 flex flex-col gap-2">
-                      <button
-                        type="button"
-                        aria-label={`Increase ${item.label}`}
-                        className={arrowClasses}
-                        onClick={() => incrementTime(item.id)}
-                        disabled={item.value === 60}
-                      >
-                        <svg width="14" height="7" aria-hidden="true">
-                          <path
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            d="M1 6l6-4 6 4"
-                          />
-                        </svg>
-                      </button>
-                      <button
-                        type="button"
-                        aria-label={`Decrease ${item.label}`}
-                        className={arrowClasses}
-                        onClick={() => decrementTime(item.id)}
-                      >
-                        <svg width="14" height="7" aria-hidden="true">
-                          <path
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            d="M1 1l6 4 6-4"
-                          />
-                        </svg>
-                      </button>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <div className="px-modal-pad-sm md:px-modal-pad-md">
+            <fieldset className="border-b border-divider py-6 md:pb-6">
+              <legend className={`${headingClasses} float-left w-full`}>
+                Time (minutes)
+              </legend>
+              <div className="clear-both flex flex-col gap-2 pt-4 md:flex-row md:gap-5 md:pt-6">
+                {settings.times.map((item, index) => (
+                  <label
+                    key={item.id}
+                    className="flex flex-wrap items-center justify-between md:flex-col md:flex-nowrap md:items-start md:gap-2"
+                  >
+                    <span className="text-modal-label font-bold text-navy-800/40">
+                      {item.label}
                     </span>
-                  </span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          <div className="flex flex-col items-center gap-4 border-b border-divider py-6 md:flex-row md:justify-between">
-            <h3 className={headingClasses}>Font</h3>
-            <div className="flex gap-4">
-              {settings.fonts.map((item, i) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  aria-label={item.name}
-                  aria-pressed={i === 0}
-                  className={`cursor-pointer size-option rounded-full text-font-option ${optionHoverClasses} ${item.className} ${
-                    i === 0
-                      ? "bg-navy-900 font-bold text-white"
-                      : "bg-input text-navy-800/70"
-                  }`}
-                >
-                  Aa
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center gap-4 pt-6 md:flex-row md:justify-between">
-            <h3 className={headingClasses}>Color</h3>
-            <div className="flex gap-4">
-              {settings.colors.map((item, i) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  aria-label={item.name}
-                  aria-pressed={i === 0}
-                  className={`cursor-pointer flex size-option items-center justify-center rounded-full ${optionHoverClasses} ${item.className}`}
-                >
-                  {i === 0 && (
-                    <svg width="15" height="11" aria-hidden="true">
-                      <path
-                        fill="none"
-                        stroke="#161932"
-                        strokeWidth="2"
-                        d="M1 5.5L4.95 9.45 13.4 1"
+                    <span className="relative flex h-time-input-h-sm w-time-input items-center rounded-input bg-input md:h-time-input-h-md">
+                      <input
+                        type="number"
+                        min={MIN_TIME}
+                        max={MAX_TIME}
+                        readOnly
+                        aria-invalid={!!errors.times?.[index]}
+                        {...register(`times.${index}`, {
+                          valueAsNumber: true,
+                          validate: (value) =>
+                            (value >= MIN_TIME && value <= MAX_TIME) ||
+                            `Must be ${MIN_TIME}-${MAX_TIME}`,
+                        })}
+                        className={`size-full rounded-input bg-transparent px-4 text-modal-input font-bold tracking-modal-input text-navy-800 outline ${
+                          errors.times?.[index]
+                            ? "outline-primary"
+                            : "outline-transparent"
+                        }`}
                       />
-                    </svg>
-                  )}
-                </button>
-              ))}
+                      <span className="absolute right-4 flex flex-col gap-2">
+                        <button
+                          type="button"
+                          aria-label={`Increase ${item.label}`}
+                          className={arrowClasses}
+                          onClick={() => changeTime(index, TIME_STEP)}
+                          disabled={times[index] >= MAX_TIME}
+                        >
+                          <svg width="14" height="7" aria-hidden="true">
+                            <path
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              d="M1 6l6-4 6 4"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          aria-label={`Decrease ${item.label}`}
+                          className={arrowClasses}
+                          onClick={() => changeTime(index, -TIME_STEP)}
+                          disabled={times[index] <= 0}
+                        >
+                          <svg width="14" height="7" aria-hidden="true">
+                            <path
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              d="M1 1l6 4 6-4"
+                            />
+                          </svg>
+                        </button>
+                      </span>
+                    </span>
+                    {errors.times?.[index] && (
+                      <span
+                        role="alert"
+                        className="w-full pt-1 text-right text-modal-label font-bold text-primary md:pt-0 md:text-left"
+                      >
+                        {errors.times[index].message}
+                      </span>
+                    )}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            <div className="flex flex-col items-center gap-4 border-b border-divider py-6 md:flex-row md:justify-between">
+              <h3 className={headingClasses}>Font</h3>
+              <div className="flex gap-4">
+                {settings.fonts.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    aria-label={item.name}
+                    aria-pressed={item.id === fontId}
+                    onClick={() => setValue("fontId", item.id)}
+                    className={`cursor-pointer size-option rounded-full text-font-option ${optionHoverClasses} ${item.className} ${
+                      item.id === fontId
+                        ? "bg-navy-900 font-bold text-white"
+                        : "bg-input text-navy-800/70"
+                    }`}
+                  >
+                    Aa
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-4 pt-6 md:flex-row md:justify-between">
+              <h3 className={headingClasses}>Color</h3>
+              <div className="flex gap-4">
+                {settings.colors.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    aria-label={item.name}
+                    aria-pressed={item.id === colorId}
+                    onClick={() => setValue("colorId", item.id)}
+                    className={`cursor-pointer flex size-option items-center justify-center rounded-full ${optionHoverClasses} ${item.className}`}
+                  >
+                    {item.id === colorId && (
+                      <svg width="15" height="11" aria-hidden="true">
+                        <path
+                          fill="none"
+                          stroke="#161932"
+                          strokeWidth="2"
+                          d="M1 5.5L4.95 9.45 13.4 1"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        <button
-          type="button"
-          className="cursor-pointer absolute bottom-0 left-1/2 h-apply-h w-apply-w -translate-x-1/2 translate-y-1/2 rounded-full bg-primary text-apply font-bold text-white transition-colors hover:bg-primary-hover"
-        >
-          Apply
-        </button>
+          <button
+            type="submit"
+            className="cursor-pointer absolute bottom-0 left-1/2 h-apply-h w-apply-w -translate-x-1/2 translate-y-1/2 rounded-full bg-primary text-apply font-bold text-white transition-colors hover:bg-primary-hover"
+          >
+            Apply
+          </button>
+        </form>
       </section>
     </div>
   );
