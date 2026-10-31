@@ -13,17 +13,26 @@ const RADIUS = 50 - STROKE_WIDTH / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export default function Timer() {
-  const { time } = useSettingsStore(
+  const { time, endTime, pausedAt, startTimer, pauseTimer } = useSettingsStore(
     useShallow((state) => ({
       time: state.settings.times.find(
         (item) => item.id === state.selectedTimeId,
       ),
+      endTime: state.endTime,
+      pausedAt: state.pausedAt,
+      startTimer: state.startTimer,
+      pauseTimer: state.pauseTimer,
     })),
   );
 
+  const [now, setNow] = useState<number | null>(null);
+
   const initialSeconds = (time?.value ?? 0) * 60;
-  const [totalSeconds, setTotalSeconds] = useState<number>(initialSeconds);
-  const [isRunning, setIsRunning] = useState<boolean>(false);
+  const isRunning = endTime !== null;
+  const totalSeconds =
+    isRunning && now !== null
+      ? Math.max(0, Math.ceil((endTime - now) / 1000))
+      : (pausedAt ?? initialSeconds);
 
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
@@ -33,19 +42,25 @@ export default function Timer() {
   const label = time?.label ?? "pomodoro";
 
   useEffect(() => {
-    if (!isRunning) return;
+    if (endTime === null) return;
 
-    const timer = setInterval(() => {
-      const next = totalSeconds - 1;
-      setTotalSeconds(next);
-      if (next <= 0) {
-        setIsRunning(false);
+    const tick = () => {
+      const current = Date.now();
+      setNow(current);
+      if (current >= endTime) {
+        pauseTimer();
         alertTimeUp(label);
       }
-    }, 1000);
+    };
 
-    return () => clearInterval(timer);
-  }, [totalSeconds, isRunning, initialSeconds, label]);
+    const firstTick = setTimeout(tick, 0);
+    const timer = setInterval(tick, 250);
+
+    return () => {
+      clearTimeout(firstTick);
+      clearInterval(timer);
+    };
+  }, [endTime, pauseTimer, label]);
 
   useEffect(() => {
     const originalTitle = document.title;
@@ -92,7 +107,7 @@ export default function Timer() {
             <button
               type="button"
               className="cursor-pointer mt-5 pl-label-sm text-label-sm font-bold uppercase tracking-label-sm transition-colors hover:text-accent md:pl-label-lg md:text-label-lg md:tracking-label-lg"
-              onClick={() => setIsRunning(false)}
+              onClick={pauseTimer}
             >
               Stop
             </button>
@@ -101,9 +116,9 @@ export default function Timer() {
               type="button"
               className="cursor-pointer mt-5 pl-label-sm text-label-sm font-bold uppercase tracking-label-sm transition-colors hover:text-accent md:pl-label-lg md:text-label-lg md:tracking-label-lg"
               onClick={() => {
-                if (!totalSeconds) setTotalSeconds(initialSeconds);
                 requestNotificationPermission();
-                setIsRunning(true);
+                setNow(Date.now());
+                startTimer(totalSeconds || initialSeconds);
               }}
             >
               {isFinished ? "Restart" : "Start"}

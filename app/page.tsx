@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useEffect, type CSSProperties } from "react";
 import Image from "next/image";
 import ModeTabs from "@/components/ModeTabs";
 import Settings from "@/components/Settings";
@@ -10,14 +10,18 @@ import useSettingsStore from "@/store/settingStore";
 import { useShallow } from "zustand/shallow";
 
 export default function Home() {
-  const { isOpen, font, color, time } = useSettingsStore(
+  const { isOpen, font, color } = useSettingsStore(
     useShallow((state) => ({
       isOpen: state.isOpen,
-      time: state.settings.times.find((t) => t.id === state.selectedTimeId),
       font: state.settings.fonts.find((f) => f.id === state.selectedFontId),
       color: state.settings.colors.find((c) => c.id === state.selectedColorId),
     })),
   );
+
+  useEffect(() => {
+    useSettingsStore.persist.rehydrate();
+  }, []);
+
   return (
     <main
       style={{ "--color-accent": color?.value } as CSSProperties}
@@ -36,7 +40,7 @@ export default function Home() {
 
       <ModeTabs />
 
-      <Timer key={`${time?.id}-${time?.value}`} />
+      <Timer />
 
       <SettingsIcon />
 
