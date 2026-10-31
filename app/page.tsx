@@ -10,9 +10,10 @@ import useSettingsStore from "@/store/settingStore";
 import { useShallow } from "zustand/shallow";
 
 export default function Home() {
-  const { isOpen, font, color } = useSettingsStore(
+  const { isOpen, font, color, time } = useSettingsStore(
     useShallow((state) => ({
       isOpen: state.isOpen,
+      time: state.settings.times.find((t) => t.id === state.selectedTimeId),
       font: state.settings.fonts.find((f) => f.id === state.selectedFontId),
       color: state.settings.colors.find((c) => c.id === state.selectedColorId),
     })),
@@ -35,7 +36,7 @@ export default function Home() {
 
       <ModeTabs />
 
-      <Timer />
+      <Timer key={`${time?.id}-${time?.value}`} />
 
       <SettingsIcon />
 

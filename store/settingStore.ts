@@ -18,6 +18,8 @@ type SettingsStore = {
   settings: Settings;
   selectedFontId: number;
   selectedColorId: number;
+  selectedTimeId: number;
+  selectTime: (id: number) => void;
   applySettings: (values: SettingsFormValues) => void;
 };
 
@@ -63,6 +65,8 @@ const useSettingsStore = create<SettingsStore>()(
     },
     selectedFontId: 1,
     selectedColorId: 1,
+    selectedTimeId: 1,
+    selectTime: (id) => set({ selectedTimeId: id }),
 
     // apply settings from the form
     applySettings: ({ times, fontId, colorId }) =>
